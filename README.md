@@ -30,9 +30,9 @@ Este repositorio contiene únicamente:
 
 Esta API forma parte de una arquitectura modular compuesta por tres repositorios principales:
 
-- 🤖 Modelo → Entrenamiento y datos ()
-- 🚀 API () → Servir inferencias
-- 📊 Frontend / Dashboard → Visualización y consumo del API ()
+- 🤖 Modelo → Entrenamiento y datos (https://github.com/camilodev404/WaterPotability)
+- 🚀 API (https://github.com/camilodev404/WaterPotability-ms) → Servir inferencias
+- 📊 Frontend / Dashboard → Visualización y consumo del API (https://github.com/camilodev404/WaterPotability-dashboard)
 
 El objetivo principal es exponer endpoints REST que permitan:
 
