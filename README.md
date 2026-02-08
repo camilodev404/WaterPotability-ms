@@ -20,7 +20,7 @@ Este repositorio contiene únicamente:
 
 
 - Cristian Camilo Nino Rincon
-- Nombre Apellido
+- Sandra Milena Pantoja Cárdenas
 - Nombre Apellido
 - Nombre Apellido
 
