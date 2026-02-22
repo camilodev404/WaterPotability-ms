@@ -1,0 +1,14 @@
+[Unit]
+Description=Water Potability API
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/WaterPotability-ms
+EnvironmentFile=/home/ubuntu/WaterPotability-ms/.env
+ExecStart=/home/ubuntu/WaterPotability-ms/.venv/bin/uvicorn src.main:app --host 127.0.0.1 --port 8000
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

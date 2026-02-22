@@ -1,20 +1,22 @@
-# 🚀 Water Potability API
+# Water Potability API
 
-![Status](https://img.shields.io/badge/status-in%20progress-yellow)
-![API](https://img.shields.io/badge/API-REST-blue)
-![ML](https://img.shields.io/badge/Machine%20Learning-Inference-green)
+Microservicio FastAPI para inferencia del modelo de potabilidad de agua.
 
-API encargada de **servir las inferencias del modelo de Machine Learning** para la predicción de potabilidad del agua.
+## Estructura
 
-Este repositorio contiene únicamente:
+- `src/main.py`: arranque de FastAPI.
+- `src/api/routes/route.py`: rutas `/api/v1`.
+- `src/api/schemas/schema.py`: contratos request/response.
+- `src/services/inference_service.py`: lógica de inferencia.
+- `src/core/model_loader.py`: carga del modelo MLflow.
+- `models/water_potability_model`: artefacto del modelo (`MLmodel`, `model.pkl`, etc.).
 
-✅ Lógica del API  
-✅ Carga del modelo entrenado  
-✅ Endpoints de inferencia  
-✅ Validación de datos  
+## Requisitos
 
+- Python 3.12+
 
----
+## Configuración local
+
 
 # 👥 Integrantes del Proyecto
 
@@ -65,31 +67,50 @@ project-root/
 ├── tests/
 ├── requirements.txt
 └── README.md
+=======
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+>>>>>>> 024c7ed (first version ms)
 ```
 
+## Copiar modelo entrenado
 
----
+Desde el root del monorepo:
 
-# ⚙️ Tecnologías
+```bash
+mkdir -p WaterPotability-ms/models/water_potability_model
+cp -r WaterPotability/notebooks/mlruns/1/models/m-1ccb4a99340344b4a23ab8657794666a/artifacts/* \
+  WaterPotability-ms/models/water_potability_model/
+```
 
-- Python
-- FastAPI / Flask
-- Pydantic
-- Uvicorn / Gunicorn
-- Docker
----
+## Ejecutar API
 
+```bash
+uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
+```
 
-# 🤖 Integración con el Modelo
+## Endpoints
 
-El modelo entrenado proviene del repositorio de Machine Learning.
+- `GET /health`
+- `GET /api/v1/health`
+- `GET /api/v1/metrics` (calcula metricas reales sobre `METRICS_CSV_PATH`)
+- `POST /api/v1/predict`
 
-Proceso esperado:
+### Ejemplo `POST /api/v1/predict`
 
-1. Exportar modelo (`.pkl`, `.joblib`, etc.)
-2. Colocar artefacto en `/models`
-3. Cargar modelo al iniciar la API
-
-```python
-# Ejemplo conceptual
-model = load_model("models/model.joblib")
+```json
+{
+  "ph": 7.2,
+  "Hardness": 204.0,
+  "Solids": 20791.0,
+  "Chloramines": 7.3,
+  "Sulfate": 368.5,
+  "Conductivity": 564.3,
+  "Organic_carbon": 10.4,
+  "Trihalomethanes": 86.9,
+  "Turbidity": 2.9
+}
+```
