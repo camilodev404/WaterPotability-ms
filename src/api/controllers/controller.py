@@ -1,10 +1,10 @@
 from pathlib import Path
-from typing import Any, Tuple
+from typing import Any, Dict, Tuple, cast
 
 import pandas as pd
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
 
-from src.api.schemas.schema import MetricsResponse
+from src.api.schemas.schema import MetricsResponse, ModelMetrics, ModelName
 from src.core.feature_mapping import ENG_TO_MODEL_COLS
 
 
@@ -25,7 +25,7 @@ def _read_mlmodel_identifiers(model_path: str) -> Tuple[str, str]:
     return (model_id, mlflow_version)
 
 
-def build_metrics(model: Any, model_path: str, csv_path: str) -> MetricsResponse:
+def _load_eval_data(csv_path: str) -> Tuple[pd.DataFrame, pd.Series]:
     data_path = Path(csv_path)
     if not data_path.exists():
         raise FileNotFoundError(f"Metrics dataset not found: {data_path}")
@@ -45,11 +45,22 @@ def build_metrics(model: Any, model_path: str, csv_path: str) -> MetricsResponse
 
     X = eval_df[expected_features].rename(columns=ENG_TO_MODEL_COLS)
     y_true = eval_df["Potability"].astype(int)
+    return X, y_true
+
+
+def _build_model_metrics(
+    model_name: str,
+    model: Any,
+    model_path: str,
+    X: pd.DataFrame,
+    y_true: pd.Series,
+) -> ModelMetrics:
     y_pred = pd.Series(model.predict(X)).astype(int)
 
     model_id, model_version = _read_mlmodel_identifiers(model_path)
 
-    return MetricsResponse(
+    return ModelMetrics(
+        model_name=cast(ModelName, model_name),
         model_id=model_id,
         model_version=model_version,
         accuracy=float(accuracy_score(y_true, y_pred)),
@@ -57,3 +68,14 @@ def build_metrics(model: Any, model_path: str, csv_path: str) -> MetricsResponse
         recall=float(recall_score(y_true, y_pred, zero_division=0)),
         f1_score=float(f1_score(y_true, y_pred, zero_division=0)),
     )
+
+
+def build_metrics(models: Dict[str, Any], model_paths: Dict[str, str], csv_path: str) -> MetricsResponse:
+    X, y_true = _load_eval_data(csv_path)
+
+    metrics = []
+    for model_name, model in models.items():
+        model_path = model_paths.get(model_name, "")
+        metrics.append(_build_model_metrics(model_name, model, model_path, X, y_true))
+
+    return MetricsResponse(models=metrics)

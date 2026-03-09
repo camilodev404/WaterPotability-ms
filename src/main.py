@@ -3,15 +3,21 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from src.api.routes.route import router as api_router
 from src.core.config import get_settings
-from src.core.model_loader import load_model
+from src.core.model_loader import load_models
 from src.services.inference_service import InferenceService
 
 settings = get_settings()
-model = load_model(settings.model_path)
-inference_service = InferenceService(model)
+configured_model_paths = {
+    "decision_tree": settings.model_path,
+    "neural_network": settings.model_path_nn,
+}
+models = load_models(configured_model_paths)
+model_paths = {name: configured_model_paths[name] for name in models}
+inference_service = InferenceService(models=models, default_model_name=settings.default_model_name)
 
 app = FastAPI(title=settings.app_name, version=settings.app_version)
 app.state.inference_service = inference_service
+app.state.model_paths = model_paths
 
 app.add_middleware(
     CORSMiddleware,

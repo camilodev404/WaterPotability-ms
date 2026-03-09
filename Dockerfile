@@ -17,6 +17,7 @@ COPY WaterPotability-ms/src /app/src
 COPY WaterPotability-ms/scripts /app/scripts
 COPY WaterPotability-ms/.env.example /app/.env.example
 COPY WaterPotability/notebooks/mlruns/1/models/m-1ccb4a99340344b4a23ab8657794666a/artifacts /app/models/water_potability_model
+COPY WaterPotability/notebooks/mlruns/1/models/m-39f28d8ab8cc4ae48bce4c2d0d4dfecb/artifacts /app/models/water_potability_model_nn
 
 EXPOSE 8000
 

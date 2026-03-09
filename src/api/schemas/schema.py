@@ -1,6 +1,10 @@
+from typing import List, Literal
+
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.core.feature_mapping import ENG_TO_MODEL_COLS
+
+ModelName = Literal["decision_tree", "neural_network"]
 
 
 class PredictRequest(BaseModel):
@@ -15,6 +19,7 @@ class PredictRequest(BaseModel):
     organic_carbon: float = Field(..., alias="Organic_carbon")
     trihalomethanes: float = Field(..., alias="Trihalomethanes")
     turbidity: float = Field(..., alias="Turbidity")
+    model_name: ModelName = Field(default="decision_tree")
 
     def to_model_payload(self) -> dict:
         return {
@@ -31,6 +36,7 @@ class PredictRequest(BaseModel):
 
 
 class PredictResponse(BaseModel):
+    model_name: ModelName
     prediction: int
     label: str
 
@@ -41,10 +47,15 @@ class HealthResponse(BaseModel):
     version: str
 
 
-class MetricsResponse(BaseModel):
+class ModelMetrics(BaseModel):
+    model_name: ModelName
     model_id: str
     model_version: str
     accuracy: float
     precision: float
     recall: float
     f1_score: float
+
+
+class MetricsResponse(BaseModel):
+    models: List[ModelMetrics]

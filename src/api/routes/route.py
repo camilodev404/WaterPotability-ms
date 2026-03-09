@@ -23,8 +23,8 @@ def metrics(
     settings: Settings = Depends(get_settings),
 ) -> MetricsResponse:
     return build_metrics(
-        model=request.app.state.inference_service.model,
-        model_path=settings.model_path,
+        models=request.app.state.inference_service.models,
+        model_paths=request.app.state.model_paths,
         csv_path=settings.metrics_csv_path,
     )
 
