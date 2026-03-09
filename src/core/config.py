@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     model_path: str = "models/water_potability_model"
     model_path_nn: str = "models/water_potability_model_nn"
     default_model_name: str = "decision_tree"
-    metrics_csv_path: str = "../WaterPotability/data/raw/water_potability.csv"
+    metrics_csv_path: str = "data/raw/water_potability.csv"
     cors_origins: List[str] = Field(default_factory=lambda: ["http://localhost:4200"])
 
     model_config = SettingsConfigDict(
